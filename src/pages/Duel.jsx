@@ -4,7 +4,7 @@ import TypeBox from '../shared/MTTypeBox.jsx';   // ou MTTypeBox
 import { apiGet } from '../lib/api.js';
 import "../duel.css"
 
-const socket = io('http://localhost:3001', {
+const socket = io('https://fast-type-back.onrender.com', {
   transports: ['websocket'],
   withCredentials: true,
 });
