@@ -14,7 +14,7 @@ export default function MTTypeBox({ content, mode = 'time', limitSec = 60, onFin
   const measureRef = useRef(null);
   const [cols, setCols] = useState(60);
 
-  // ---- timer / progress
+  // --- RAF timer
   const rafRef = useRef(null);
   useEffect(() => {
     if (!startedAt || finished) return;
@@ -30,19 +30,38 @@ export default function MTTypeBox({ content, mode = 'time', limitSec = 60, onFin
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, [startedAt, finished, mode, limitSec, pos, errors, hasError, onProgress]);
 
-  // ---- tokenisation (mots + espaces)
+  // --- Normalisation robuste (source et saisie)
+  const normalizeString = (s) => {
+    if (!s) return '';
+    return s
+      // unifier retours
+      .replace(/\r\n?/g, '\n')
+      // espaces insécables et fines -> espace normal
+      .replace(/[\u00A0\u2007\u202F]/g, ' ')
+      // guillemets/apostrophes “ ” ‘ ’ ʼ ′ -> versions ASCII
+      .replace(/[\u201C\u201D]/g, '"')
+      .replace(/[\u2018\u2019\u02BC\u2032]/g, "'")
+      // accents morts transformés en caractère équivalent si jamais composés
+      .normalize('NFC');
+  };
+
+  const src = useMemo(() => normalizeString(content), [content]);
+
+  // ---- tokenisation (mots + espaces) basée sur src
   const tokens = useMemo(() => {
-    const parts = content.split(' ');
+    const parts = src.split(' ');
     const arr = [];
     parts.forEach((w, i) => {
       arr.push(w);
       if (i < parts.length - 1) arr.push(' ');
     });
     return arr;
-  }, [content]);
+  }, [src]);
 
   // ---- calcul des lignes en fonction de `cols`
   const lines = useMemo(() => {
@@ -60,7 +79,6 @@ export default function MTTypeBox({ content, mode = 'time', limitSec = 60, onFin
     for (const t of tokens) {
       const len = t.length;
 
-      // si un token dépasse la largeur et qu'on est en début de ligne, on coupe le token (rare)
       if (len > cols && currentLen === 0) {
         let remaining = len;
         while (remaining > cols) {
@@ -108,10 +126,8 @@ export default function MTTypeBox({ content, mode = 'time', limitSec = 60, onFin
       const span = measureRef.current;
       if (!box || !span) return;
 
-      // contenu de mesure : 10 M (monospace) pour charWidth précis (inclut letter-spacing)
       span.textContent = 'MMMMMMMMMM';
 
-      // largeur intérieure = clientWidth - padding horizontal
       const cs = getComputedStyle(box);
       const padX = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
       const innerWidth = Math.max(0, (box.clientWidth || 0) - padX);
@@ -119,11 +135,9 @@ export default function MTTypeBox({ content, mode = 'time', limitSec = 60, onFin
       const w10 = span.getBoundingClientRect().width || 80;
       const charW = w10 / 10;
 
-      // marge de sécurité -1 colonne
       const c = Math.max(10, Math.floor(innerWidth / charW) - 1);
       setCols(c);
 
-      // nettoie le span de mesure
       span.textContent = '';
     };
 
@@ -138,46 +152,96 @@ export default function MTTypeBox({ content, mode = 'time', limitSec = 60, onFin
     inputRef.current?.focus();
   }, []);
 
-  // ---- saisie
-  const onBeforeInput = (e) => {
-    const allowed = ['insertText', 'deleteContentBackward'];
-    if (!allowed.includes(e.inputType)) e.preventDefault();
+  const ensureStarted = () => {
+    if (!startedAt) setStartedAt(Date.now());
   };
 
-  const onKeyDown = (e) => {
+  // ---- helpers de saisie (un seul endroit)
+  const commitProgress = (nextPos, nextErrors, ms) => {
+    onProgress && onProgress(nextPos, nextErrors, ms);
+  };
+
+  const typeChar = (rawCh) => {
     if (finished) return;
 
-    if (e.key === 'Backspace') {
-      setTyped(t => t + 1);
-      if (hasError) setHasError(false);
-      else if (pos > 0) setPos(p => p - 1);
-      e.preventDefault();
-      return;
-    }
+    // Si une erreur est active, on force Backspace d'abord (comportement inchangé)
+    if (hasError) return;
 
-    if (e.key.length !== 1) return;
+    const ch = normalizeString(rawCh);
     if (!startedAt) setStartedAt(Date.now());
-    if (hasError) { e.preventDefault(); return; }
+    setTyped((t) => t + 1);
 
-    setTyped(t => t + 1);
-    const expected = content[pos] ?? '';
+    const expected = src[pos] ?? '';
     const ms = startedAt ? (Date.now() - startedAt) : 0;
 
-    if (e.key === expected) {
+    if (ch === expected) {
       const next = pos + 1;
       setPos(next);
-      onProgress && onProgress(next, errors, ms);
-      if (mode === 'text' && next >= content.length) {
+      commitProgress(next, errors, ms);
+      if (mode === 'text' && next >= src.length) {
         setFinished(true);
         onFinish && onFinish(stats(ms));
       }
     } else {
       setHasError(true);
-      setErrors(er => er + 1);
-      onProgress && onProgress(pos, errors + 1, ms);
+      setErrors((er) => {
+        const val = er + 1;
+        commitProgress(pos, val, ms);
+        return val;
+      });
+    }
+  };
+
+  const handleBackspace = () => {
+    if (finished) return;
+    setTyped((t) => t + 1);
+    if (hasError) setHasError(false);
+    else if (pos > 0) setPos((p) => p - 1);
+  };
+
+  // ---- onBeforeInput : source de vérité
+  const onBeforeInput = (e) => {
+    const it = e.inputType;
+    // On gère tout ici
+    if (it === 'insertText' || it === 'insertCompositionText') {
+      e.preventDefault();
+      ensureStarted();
+      const data = e.data ?? '';
+      // Peut contenir plusieurs caractères (ex. collage ou saisie composition)
+      for (const ch of data) typeChar(ch);
+      return;
     }
 
+    if (it === 'deleteContentBackward') {
+      e.preventDefault();
+      handleBackspace();
+      return;
+    }
+
+    // Bloquer toute autre action (coller, supprimer mot, etc.)
     e.preventDefault();
+  };
+
+  // ---- Fallback onKeyDown (utile sur certains cas Firefox / IME)
+  const onKeyDown = (e) => {
+    if (finished) return;
+
+    // Ne pas double-traiter la composition
+    if (e.isComposing) return;
+
+    if (e.key === 'Backspace') {
+      e.preventDefault();
+      handleBackspace();
+      return;
+    }
+
+    // Si beforeinput ne passe pas et que c'est un caractère imprimable simple
+    if (e.key.length === 1) {
+      e.preventDefault();
+      ensureStarted();
+      typeChar(e.key);
+      return;
+    }
   };
 
   // ---- stats
@@ -194,7 +258,12 @@ export default function MTTypeBox({ content, mode = 'time', limitSec = 60, onFin
   });
 
   return (
-    <div className="mono" onClick={() => inputRef.current?.focus()}>
+    <div
+      className="mono"
+      tabIndex={-1}
+      onMouseDown={(e) => { e.preventDefault(); inputRef.current?.focus(); }}
+      onClick={() => inputRef.current?.focus()}
+    >
       <style>{`
         .caret { position: relative; }
         .caret.focused::after {
@@ -204,7 +273,7 @@ export default function MTTypeBox({ content, mode = 'time', limitSec = 60, onFin
           bottom: -2px;
           width: 100%;
           height: 2px;
-          background: #e2b714;
+          background: #e2b714; /* jaune comme demandé précédemment */
           animation: blink 1s steps(1) infinite;
         }
         @keyframes blink { 0%,50%{opacity:1} 51%,100%{opacity:0} }
@@ -222,15 +291,18 @@ export default function MTTypeBox({ content, mode = 'time', limitSec = 60, onFin
         className={`words ${focused ? 'active' : ''}`}
         style={{
           display: 'grid',
-          gridAutoRows: '1.6em',          // = line-height
+          gridAutoRows: '1.6em',
           gap: 0,
           overflow: 'hidden',
-          height: 'calc(1.6em * 3)',      // 3 lignes
+          height: 'calc(1.6em * 3)',
           textAlign: 'center',
           border: '2px solid transparent',
           borderRadius: '8px',
           transition: 'border 0.2s ease, box-shadow 0.2s ease',
-          padding: '0 12px',              // ← évite l’impression de coupe à droite/gauche
+          padding: '0 12px',
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+          MozUserSelect: 'none',
         }}
       >
         {/* span de mesure (invisible) */}
@@ -248,9 +320,10 @@ export default function MTTypeBox({ content, mode = 'time', limitSec = 60, onFin
               if (i < pos) cls = 'ok';
               else if (i === pos) cls = hasError ? 'err caret' : 'caret';
               if (cls.includes('caret') && focused) cls += ' focused';
+              const ch = src[i] ?? '';
               return (
                 <span key={i} className={cls}>
-                  {content[i] === ' ' ? <span className="space"> </span> : content[i]}
+                  {ch === ' ' ? <span className="space"> </span> : ch}
                 </span>
               );
             })}
@@ -267,7 +340,14 @@ export default function MTTypeBox({ content, mode = 'time', limitSec = 60, onFin
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false}
-        style={{ opacity: 0, position: 'absolute' }}
+        // Input caché mais focusable
+        style={{
+          opacity: 0,
+          position: 'absolute',
+          width: 0,
+          height: 0,
+          pointerEvents: 'none',
+        }}
       />
 
       {finished && (
