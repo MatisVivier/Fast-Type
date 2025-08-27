@@ -11,7 +11,7 @@ import { levelFromXp } from '../lib/levels.js';
 import AccountPanel from '../components/AccountPanel.jsx';
 import '../account.css'
 
-const API = 'http://localhost:3001/api';
+const API = 'https://fast-type-back.onrender.com/api';
 
 function wordCountFor(limitSec) {
   return Math.max(80, Math.round(limitSec * 6.5));
