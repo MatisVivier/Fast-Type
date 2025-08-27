@@ -188,7 +188,7 @@ export default function AccountPanel({ user, onUserUpdate }) {
                 </div>
                 <div className="rowMini">
                   <span className="mini">
-                    ΔElo <b style={{ color: deltaElo >= 0 ? '#a3ffba' : '#ff8f8f' }}>
+                    Elo <b style={{ color: deltaElo >= 0 ? '#a3ffba' : '#ff8f8f' }}>
                       {deltaElo >= 0 ? '+' : ''}{deltaElo}
                     </b>
                   </span>

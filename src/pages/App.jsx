@@ -10,6 +10,7 @@ import RightBar from '../components/RightBar.jsx';     // ⟵ sidebar droite (mo
 import { levelFromXp } from '../lib/levels.js';
 import AccountPanel from '../components/AccountPanel.jsx';
 import '../account.css'
+import CurrencyBadge from './shared/CurrencyBadge.jsx';
 
 const API = 'https://fast-type-back.onrender.com/api';
 
@@ -74,6 +75,7 @@ export default function App() {
             <>
               <span className="stat">👤 {user.username || user.email}</span>
               <span className="stat">Lvl {lvl.level} • {lvl.inLevel}/{lvl.need} XP</span>
+              <span className="stat">{user.coin_balance} pièces</span>
               <span className="stat">
                 Elo: <strong>{user.rating}</strong>
                 {' '}•{' '}

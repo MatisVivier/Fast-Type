@@ -220,7 +220,7 @@ export default function Duel({ onExit, onUserRefresh }) {
             onProgress={onProgress}
             onFinish={onFinish}
           />
-          <div style={{ marginTop: 12 }}>
+          <div style={{ marginTop: 12, textAlign: "center" }}>
             {players.length === 2 && me && (
               <>
                 Adversaire — <strong>{players.find(p => p.id !== me.id)?.username || 'Adversaire'}</strong>
@@ -236,7 +236,7 @@ export default function Duel({ onExit, onUserRefresh }) {
           <div className="results-header">
             {result.winnerUsername ? (
               <div className="winner-line">
-                <span className="trophy">🏆</span>
+                <span className="trophy">Gagnant :</span>
                 <span className="winner-name">{result.winnerUsername}</span>
                 <span className="reason">({result.reason})</span>
               </div>
@@ -334,15 +334,6 @@ export default function Duel({ onExit, onUserRefresh }) {
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="actions">
-            <button
-              className="btn"
-              onClick={() => { setResult(null); setOpponent({}); setStatus('idle'); queuedRef.current = false; }}
-            >
-              Rejouer
-            </button>
           </div>
         </div>
       )}
