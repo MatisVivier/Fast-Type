@@ -1,13 +1,14 @@
-// src/lib/socket.js
-import io from 'socket.io-client'
+import { io } from 'socket.io-client';
 
-// 🔧 URL Render de ton back
-const PROD_WS = 'https://fast-type-back.onrender.com' // TODO: remplace
-
-export const socket = io(
-  import.meta.env.PROD ? PROD_WS : 'http://localhost:3001',
-  {
-    transports: ['websocket'],
-    withCredentials: true,
-  }
-)
+export const socket = io('https://fast-type-back.onrender.com', {
+  withCredentials: true,
+  // laissez le polling possible pour établir la connexion puis upgrade en WS
+  transports: ['polling', 'websocket'],
+  // explicite mais optionnel (c’est la valeur par défaut)
+  path: '/socket.io',
+  // plus tolérant aux réseaux “capricieux”
+  reconnection: true,
+  reconnectionAttempts: 10,
+  reconnectionDelay: 500,
+  timeout: 10000,
+});
