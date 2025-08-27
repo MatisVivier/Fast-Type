@@ -10,7 +10,7 @@ import RightBar from '../components/RightBar.jsx';     // ⟵ sidebar droite (mo
 import { levelFromXp } from '../lib/levels.js';
 import AccountPanel from '../components/AccountPanel.jsx';
 import '../account.css'
-import CurrencyBadge from './shared/CurrencyBadge.jsx';
+import CurrencyBadge from '../shared/CurrencyBadge.jsx';
 
 const API = 'https://fast-type-back.onrender.com/api';
 
