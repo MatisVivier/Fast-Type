@@ -33,14 +33,14 @@ export default function Auth({ onAuthenticated }) {
             className={`btn tab ${mode === 'login' ? 'active' : ''}`}
             onClick={() => setMode('login')}
           >
-            Login
+            Connexion
           </button>
           <button
             type="button"
             className={`btn tab ${mode === 'register' ? 'active' : ''}`}
             onClick={() => setMode('register')}
           >
-            Register
+            Inscription
           </button>
         </div>
 

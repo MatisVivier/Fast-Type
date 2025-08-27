@@ -1,13 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import io from 'socket.io-client';
 import TypeBox from '../shared/MTTypeBox.jsx';   // ou MTTypeBox
 import { apiGet } from '../lib/api.js';
 import "../duel.css"
-
-const socket = io('https://fast-type-back.onrender.com', {
-  transports: ['websocket'],
-  withCredentials: true,
-});
+import { socket } from '../lib/socket.js';
 
 export default function Duel({ onExit, onUserRefresh }) {
   const [status, setStatus] = useState('idle');  // idle | queue | ready | playing | done | error
