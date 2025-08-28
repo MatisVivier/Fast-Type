@@ -13,7 +13,9 @@ import ShopSidebar from '../components/ShopSideBar.jsx'; // ⟵ ta boutique (tou
 import '../account.css';
 import CurrencyBadge from '../shared/CurrencyBadge.jsx';
 
-const API = 'https://fast-type-back.onrender.com/api';
+const API = import.meta.env.MODE === 'development'
+  ? 'http://localhost:3001/api'
+  : 'https://fast-type-back.onrender.com/api';
 
 function wordCountFor(limitSec) {
   return Math.max(80, Math.round(limitSec * 6.5));
