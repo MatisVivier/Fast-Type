@@ -6,12 +6,12 @@ import Duel from './Duel.jsx';
 import { apiGet, apiPost } from '../lib/api.js';
 import RanksModal from '../components/RanksModal.jsx';
 import { getRank } from '../lib/ranks.js';
-import SideNav from '../components/SideNav.jsx';
-import RightBar from '../components/RightBar.jsx';
+import SideNav from '../components/SideNav.jsx';          // ← Choix du temps etc. (col 2)
+import RightBar from '../components/RightBar.jsx';        // ← Modes/Ranked (col 4)
 import { levelFromXp } from '../lib/levels.js';
-import AccountPanel from '../components/AccountPanel.jsx';
-import ShopSidebar from '../components/ShopSideBar.jsx';
-import FriendsSidebar from '../components/FriendsSidebar.jsx'; // ← NEW
+import AccountPanel from '../components/AccountPanel.jsx'; // ← full width en bas
+import ShopSidebar from '../components/ShopSideBar.jsx';   // ← Boutique (col 1)
+import FriendsSidebar from '../components/FriendsSidebar.jsx'; // ← Amis (col 5)
 import '../account.css';
 
 const API = import.meta.env.MODE === 'development'
@@ -94,12 +94,12 @@ export default function App() {
         </div>
       </div>
 
-      {/* ===== 5 colonnes : Boutique | SideNav | Main | RightBar | Friends ===== */}
-      <div className="layout layout-5 with-shop  equal-heights">
-        {/* Colonne 1 : BOUTIQUE */}
+      {/* ===== 5 colonnes fixes dans l'ordre demandé ===== */}
+      <div className="layout layout-5 with-shop with-friends">
+        {/* 1) Boutique */}
         <ShopSidebar />
 
-        {/* Colonne 2 : SideNav */}
+        {/* 2) Choix du temps / actions */}
         <SideNav
           limitSec={limitSec}
           setLimitSec={(d) => setLimitSec(d)}
@@ -107,7 +107,7 @@ export default function App() {
           onReset={() => setSeed(s => s + 1)}
         />
 
-        {/* Colonne 3 : Main */}
+        {/* 3) Solo / TypeBox */}
         <main className="main">
           <div className="card" style={{ marginTop: 0 }}>
             {textObj ? (
@@ -129,7 +129,7 @@ export default function App() {
           </div>
         </main>
 
-        {/* Colonne 4 : RightBar */}
+        {/* 4) Modes / Ranked */}
         <RightBar
           user={user}
           onOpenRanks={() => setRanksOpen(true)}
@@ -137,19 +137,15 @@ export default function App() {
           onSelectMode={selectMode}
         />
 
-        {/* Colonne 5 : Friends */}
+        {/* 5) Amis */}
         <FriendsSidebar />
 
-        {/* AccountPanel LARGE : s'étend des colonnes 2 → 6 (tout à droite de la boutique) */}
+        {/* ===== AccountPanel : full width sous toute la grille ===== */}
         {user && (
-  <div
-    className="account-wide-wrap full"   // ← full width sous toute la grille
-    style={{ marginTop: 16 }}
-  >
-    <AccountPanel user={user} onUserUpdate={refreshUser} />
-  </div>
-)}
-
+          <div className="account-wide-wrap full" style={{ marginTop: 16 }}>
+            <AccountPanel user={user} onUserUpdate={refreshUser} />
+          </div>
+        )}
       </div>
 
       <RanksModal open={ranksOpen} onClose={()=>setRanksOpen(false)} rating={user?.rating ?? 0} />

@@ -18,9 +18,24 @@ a { color: inherit; text-decoration: none; }
 .muted { color: #9aa4af; }
 
 /* ========= Layout container & cards ========= */
-.container { max-width: 1600px; margin: 0px auto; padding: 0 16px;}
-.card { background: #12141a; border: 1px solid #1e222a; border-radius: 14px; padding: 46.5px; }
-.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; text-align: center; }
+.container { max-width: 1600px; margin: 0 auto; padding: 0 16px; }
+
+.card {
+  background: #12141a;
+  border: 1px solid #1e222a;
+  border-radius: 14px;
+  padding: 46.5px;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+}
+
 .navbar {
   margin-bottom: 30px;
   padding-top: 40px;
@@ -39,55 +54,65 @@ a { color: inherit; text-decoration: none; }
 }
 .btn:hover { border-color: #2b313a; }
 .btn.secondary { background: #1b1f27; }
-.stat { background: #0f1116; border: 1px solid #1e222a; border-radius: 10px; padding: 8px 12px; }
 
-.rank-link { cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.stat {
+  background: #0f1116;
+  border: 1px solid #1e222a;
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.rank-link {
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 .rank-link:hover { opacity: .9; }
 
 /* ========= Typing area ========= */
 .mono { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; }
 
-/* HUD au-dessus de la zone de frappe */
-.hud { display: flex; gap: 12px; margin-top: 0px; margin-bottom: 20px !important; color: #9aa4af; justify-content: center; }
+.hud {
+  display: flex;
+  gap: 12px;
+  margin-top: 0;
+  margin-bottom: 20px !important;
+  color: #9aa4af;
+  justify-content: center;
+}
 .hud .v { color: #e6edf3; font-weight: 600; }
 
 /* Zone de mots (3 lignes visibles) */
-/* Zone de mots (3 lignes visibles) */
 .words { 
   font-size: 18px;
-  line-height: 1.6;       /* ← cohérent avec la grille ci-dessous */
+  line-height: 1.6;
   letter-spacing: 0.2px;
   user-select: none;
   cursor: text;
   text-align: center;
   max-width: 100%;
   box-sizing: border-box;
-  padding: 0 12px;        /* ← évite l'impression de “coupe” à droite/gauche */
+  padding: 0 12px;
 }
 
 /* Conteneur des 3 lignes */
 .viewport3 {
   display: grid;
-  grid-auto-rows: 1.6em;              /* ← doit matcher line-height */
+  grid-auto-rows: 1.6em;
   gap: 0;
   overflow: hidden;
-  height: calc(1.6em * 3);            /* ← 3 lignes pile */
+  height: calc(1.6em * 3);
   width: 100%;
 }
 
-/* Une ligne affichée (1 ligne strict, pas de wrap) */
+/* Une ligne */
 .line { 
   display: block;
-  white-space: pre;                   /* ← pas de retour à la ligne automatique */
-  height: 1.6em;                      /* ← cohérent avec grid-auto-rows */
-  overflow: hidden;                   /* ← cache ce qui dépasserait verticalement */
-  padding: 0 2px;                     /* petit espace pour le caret visuel */
+  white-space: pre;
+  height: 1.6em;
+  overflow: hidden;
+  padding: 0 2px;
 }
-
-/* Si tu rencontres des tokens ENORMES (mots ultra longs) et que tu préfères scroller 
-   plutôt que couper, dé-commente la ligne suivante : */
-/* .viewport3 { overflow-x: auto; } */
-
 
 /* États de caractères */
 .ok { color: #a3ffba; }
@@ -99,14 +124,14 @@ a { color: inherit; text-decoration: none; }
   position: absolute;
   left: 0; right: 0; bottom: -2px;
   height: 2px;
-  background: #e2b714;   /* accent “Monkeytype” */
+  background: #e2b714;   /* accent */
 }
 
 .space { white-space: pre; }
 
 /* ========= Layout colonnes ========= */
-/* 3 colonnes : sidebar gauche | contenu | sidebar droite */
-.layout.layout-3{
+/* Ancien layout 3 colonnes (si utilisé ailleurs) */
+.layout.layout-3 {
   display: grid;
   grid-template-columns: 240px 1fr 260px;
   gap: 16px;
@@ -114,18 +139,41 @@ a { color: inherit; text-decoration: none; }
   margin-top: 16px;
 }
 
-.sidebar{
+.sidebar {
   position: sticky; 
   top: 16px;
   height: fit-content;
   padding: 12px 16px;
 }
 
+/* ===== Nouveau layout 5 colonnes ===== */
+/* Boutique | SideNav | Main | RightBar | Friends */
+.layout.layout-5.with-shop.with-friends {
+  display: grid;
+  grid-template-columns: 280px 240px minmax(0,1fr) 260px 280px;
+  gap: 16px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+/* Sidebars collantes */
+.sidebar,
+.rightbar,
+.friendsbar,
+.shop-sidebar {
+  position: sticky;
+  top: 16px;
+  height: fit-content;
+}
+
+/* AccountPanel full width en bas */
+.account-wide-wrap.full { grid-column: 1 / -1; }
+
 /* ========= Sidebar gauche (actions) ========= */
-.side-group{ margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
-.side-label{ font-size: 12px; color: #9aa4af; margin-bottom: 4px; }
-.side-pills{ display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-.pill{
+.side-group { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.side-label { font-size: 12px; color: #9aa4af; margin-bottom: 4px; }
+.side-pills { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.pill {
   border: 1px solid #1e222a;
   background: transparent;
   color: #e6edf3;
@@ -135,15 +183,15 @@ a { color: inherit; text-decoration: none; }
   font-size: 13px;
   font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
 }
-.pill:hover{ border-color:#2b313a; }
+.pill:hover { border-color:#2b313a; }
 .pill.active {
-  border-color: gold;      /* 🎉 bordure dorée */
+  border-color: gold;
   font-weight: bold;
 }
 
 /* ========= Sidebar droite (modes) ========= */
-.rightbar .modes-col{ display: flex; flex-direction: column; gap: 8px; }
-.mode-card{
+.rightbar .modes-col { display: flex; flex-direction: column; gap: 8px; }
+.mode-card {
   text-align: center;
   border: 1px solid #1e222a;
   background: transparent;
@@ -153,12 +201,15 @@ a { color: inherit; text-decoration: none; }
   cursor: pointer;
   font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
 }
-.mode-card .mode-title{ font-weight: 700; margin-bottom: 4px; }
-.mode-card .mode-desc{ font-size: 12px; color: #9aa4af; }
-.mode-card:hover{ border-color:#2b313a; }
-.mode-card:disabled{ opacity: .6; cursor: not-allowed; }
-.mode-badge{
-  font-size: 11px; background:#2b313a; padding:2px 6px; border-radius:999px;
+.mode-card .mode-title { font-weight: 700; margin-bottom: 4px; }
+.mode-card .mode-desc { font-size: 12px; color: #9aa4af; }
+.mode-card:hover { border-color:#2b313a; }
+.mode-card:disabled { opacity: .6; cursor: not-allowed; }
+.mode-badge {
+  font-size: 11px;
+  background:#2b313a;
+  padding:2px 6px;
+  border-radius:999px;
   margin-left: 6px;
 }
 
@@ -169,79 +220,22 @@ tbody tr { border-top: 1px solid #1e222a; }
 th, td { text-align: left; padding: 10px 12px; }
 
 /* ========= Responsive ========= */
-@media (max-width: 1100px){
-  .layout.layout-3{ grid-template-columns: 220px 1fr; }
-  .rightbar{ display: none; } /* masque la sidebar droite pour garder de l’espace */
-}
-
-@media (max-width: 900px){
-  .layout.layout-3{ grid-template-columns: 1fr; }
-  .sidebar{ position: static; order: -1; } /* sidebar gauche passe au-dessus */
-}
-
-/* ====== largeur du container (tu es passé à 1600px) ====== */
-.container { max-width: 1600px; margin: 0 auto; padding: 0 16px; }
-
-/* ====== grille 5 colonnes (tu peux affiner les largeurs si besoin) ====== */
-.layout.layout-5.with-shop.with-friends{
-  display:grid;
-  grid-template-columns: 280px 220px minmax(0,1fr) 260px 280px; /* Shop | Side | Main | Right | Friends */
-  gap:16px;
-  align-items:start;
-  margin-top:16px;
-}
-
-/* ====== AccountPanel : deux modes ====== */
-/* Full width : il ferme toute la largeur sous la grille */
-.account-wide-wrap.full { grid-column: 1 / -1; }
-
-/* Centré : large mais pas bord à bord, reste à droite de la boutique */
-.account-wide-wrap.center {
-  grid-column: 2 / 5;           /* SideNav + Main + RightBar */
-  width:100%;
-  max-width: 1200px;            /* ajuste à ton goût: 1200–1300 */
-  justify-self: center;         /* centre le bloc dans sa zone */
-}
-
-/* ====== Sticky par défaut (comme aujourd’hui) ====== */
-.sidebar, .rightbar, .friendsbar, .shop-sidebar {
-  position: sticky;
-  top: 16px;
-  height: fit-content;
-}
-
-/* ====== OPTION : hauteurs égales (désactive le sticky) ====== */
-/* Ajoute la classe .equal-heights sur la grille pour activer cette section */
-.layout.equal-heights .sidebar,
-.layout.equal-heights .rightbar,
-.layout.equal-heights .friendsbar,
-.layout.equal-heights .shop-sidebar {
-  position: static;      /* casse le sticky */
-  align-self: stretch;   /* occupe toute la hauteur de la rangée */
-  height: 100%;
-}
-
-/* Pour que l’intérieur reste joli en stretch */
-.layout.equal-heights .shop-sidebar,
-.layout.equal-heights .rightbar,
-.layout.equal-heights .friendsbar,
-.layout.equal-heights .sidebar {
-  display: flex;
-  flex-direction: column;
-}
-
-/* ====== Responsive conservé ====== */
-@media (max-width: 1100px){
-  .layout.layout-5.with-shop.with-friends{
-    grid-template-columns: 260px 1fr; /* Shop | Main */
+@media (max-width: 1400px){
+  .layout.layout-5.with-shop.with-friends {
+    grid-template-columns: 260px 220px minmax(0,1fr) 240px 260px;
   }
-  .sidebar, .rightbar, .friendsbar { display: none; }
-  .account-wide-wrap.full,
-  .account-wide-wrap.center { grid-column: 1 / -1; }
+}
+
+@media (max-width: 1200px){
+  .layout.layout-5.with-shop.with-friends {
+    grid-template-columns: 240px 1fr 260px; /* Shop | Main | Friends */
+  }
+  .sidebar, .rightbar { display: none; }
 }
 
 @media (max-width: 900px){
-  .layout.layout-5.with-shop.with-friends{ grid-template-columns: 1fr; }
-  .shop-sidebar { position: static; }
+  .layout.layout-5.with-shop.with-friends {
+    grid-template-columns: 1fr;
+  }
+  .shop-sidebar, .friendsbar { position: static; }
 }
-
