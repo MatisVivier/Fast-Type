@@ -180,7 +180,6 @@ th, td { text-align: left; padding: 10px 12px; }
 }
 
 /* ====== Grille 4 colonnes quand la boutique est présente ====== */
-/* 4 colonnes : Boutique | SideNav | Main (large) | RightBar */
 .layout.layout-4.with-shop {
   display: grid;
   grid-template-columns: 260px 200px minmax(0, 1fr) 240px;
@@ -194,7 +193,7 @@ th, td { text-align: left; padding: 10px 12px; }
 .shop-sidebar {
   position: sticky;
   top: 16px;
-  height: 800px;
+  height: fit-content;
 }
 
 /* RESPONSIVE : comme le container est à 1200px, on masque la droite en premier */
