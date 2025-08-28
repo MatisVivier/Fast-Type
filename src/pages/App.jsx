@@ -1,3 +1,4 @@
+// src/pages/App.jsx
 import React, { useEffect, useState } from 'react';
 import TypeBox from '../shared/MTTypeBox.jsx';
 import Auth from './Auth.jsx';
@@ -11,7 +12,6 @@ import { levelFromXp } from '../lib/levels.js';
 import AccountPanel from '../components/AccountPanel.jsx';
 import ShopSidebar from '../components/ShopSideBar.jsx'; // ← colonne boutique
 import '../account.css';
-import CurrencyBadge from '../shared/CurrencyBadge.jsx';
 
 const API = import.meta.env.MODE === 'development'
   ? 'http://localhost:3001/api'
@@ -73,8 +73,6 @@ export default function App() {
       <div className="navbar" style={{ display:'flex', justifyContent:'space-between', alignItems:'center'}}>
         <h1>Duel Keys</h1>
 
-        {/* plus de bouton Boutique, la colonne est toujours visible */}
-
         <div className="row">
           {user ? (
             <>
@@ -82,8 +80,7 @@ export default function App() {
               <span className="stat">Lvl {lvl.level} • {lvl.inLevel}/{lvl.need} XP</span>
               <span className="stat">{user?.coin_balance ?? 0} pièces</span>
               <span className="stat">
-                Elo: <strong>{user.rating}</strong>
-                {' '}•{' '}
+                Elo: <strong>{user.rating}</strong> •{' '}
                 <span className="rank-link" onClick={()=>setRanksOpen(true)}>
                   {getRank(user.rating).label}
                 </span>
@@ -96,10 +93,12 @@ export default function App() {
         </div>
       </div>
 
-      {/* Layout avec boutique à gauche */}
-      <div className="layout with-shop">
-        <ShopSidebar /> {/* ← colonne la plus à gauche */}
+      {/* ===== 4 colonnes : Boutique | SideNav | Main | RightBar ===== */}
+      <div className="layout layout-4 with-shop">
+        {/* Colonne 1 : BOUTIQUE */}
+        <ShopSidebar />
 
+        {/* Colonne 2 : SideNav */}
         <SideNav
           limitSec={limitSec}
           setLimitSec={(d) => setLimitSec(d)}
@@ -107,6 +106,7 @@ export default function App() {
           onReset={() => setSeed(s => s + 1)}
         />
 
+        {/* Colonne 3 : Main */}
         <main className="main">
           <div className="card" style={{ marginTop: 0 }}>
             {textObj ? (
@@ -127,8 +127,16 @@ export default function App() {
               <p>Chargement du texte…</p>
             )}
           </div>
+
+          {/* AccountPanel à la suite */}
+          {user && (
+            <div style={{ marginTop: 16 }}>
+              <AccountPanel user={user} onUserUpdate={refreshUser} />
+            </div>
+          )}
         </main>
 
+        {/* Colonne 4 : RightBar */}
         <RightBar
           user={user}
           onOpenRanks={() => setRanksOpen(true)}
@@ -138,10 +146,6 @@ export default function App() {
       </div>
 
       <RanksModal open={ranksOpen} onClose={()=>setRanksOpen(false)} rating={user?.rating ?? 0} />
-
-      {user && (
-        <AccountPanel user={user} onUserUpdate={refreshUser} />
-      )}
     </div>
   );
 }

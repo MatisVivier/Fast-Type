@@ -1,79 +1,26 @@
-/* Colonne boutique (alignée au style actuel) */
-.with-shop {
-  display: flex;
-  gap: 16px;               /* même espace que tes sidebars */
-}
-
-/* container visuel (pas collé au bord) */
-.shop-sidebar {
-  width: 260px;
-  min-width: 260px;
-  height: calc(100vh - 64px);          /* 64px ≈ hauteur navbar; ajuste si besoin */
-  position: sticky;
-  top: 64px;                           /* colle sous la navbar */
-  align-self: flex-start;
-
-  background: var(--card-bg, #14161a);
-  border: 1px solid var(--border-color, #2a2e35);
-  border-radius: 12px;
+/* Colonne Boutique (garde le même style que .card) */
+.shop-sidebar{
+  background: #12141a;
+  border: 1px solid #1e222a;
+  border-radius: 14px;
   padding: 14px;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.02) inset;
-
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  width: 100%;          /* la largeur est pilotée par la grille (260px) */
+  max-height: calc(100vh - 16px - 40px); /* 16px top sticky + ~40px marge navbar */
+  overflow: auto;       /* scroll interne si contenu long */
 }
 
-/* header */
-.shop-header h2 {
-  font-size: 18px;
-  margin: 0;
-  letter-spacing: .5px;
+.shop-header h2{ font-size: 18px; margin: 0 0 8px 0; }
+
+.shop-content { display:flex; flex-direction:column; gap:10px; }
+
+.shop-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+.shop-item{
+  display:flex; align-items:center; justify-content:space-between;
+  background:#0f1116; border:1px solid #1e222a; border-radius:10px; padding:10px;
 }
-
-/* contenu scrollable */
-.shop-content {
-  overflow: auto;
-  padding-right: 4px;
-}
-
-/* liste items */
-.shop-list {
-  list-style: none;
-  margin: 10px 0 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.shop-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid var(--border-color, #2a2e35);
-  border-radius: 10px;
-  padding: 10px;
-}
-
-.item-left {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.item-emoji { font-size: 20px; }
-
-.item-infos { display: flex; flex-direction: column; }
-.item-title { font-weight: 600; }
-.item-desc  { opacity: .7; font-size: 12px; }
-
-.item-price { font-weight: 700; }
-.coin { opacity: .8; font-weight: 500; }
-
-/* si ton thème a une classe .card, on homogénéise */
-.shop-sidebar,
-.shop-item {
-  backdrop-filter: blur(2px);
-}
+.item-left{ display:flex; gap:10px; align-items:center; }
+.item-emoji{ font-size:20px; }
+.item-title{ font-weight:600; }
+.item-desc{ opacity:.7; font-size:12px; }
+.item-price{ font-weight:700; }
+.coin{ opacity:.8; font-weight:500; }

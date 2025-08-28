@@ -178,3 +178,35 @@ th, td { text-align: left; padding: 10px 12px; }
   .layout.layout-3{ grid-template-columns: 1fr; }
   .sidebar{ position: static; order: -1; } /* sidebar gauche passe au-dessus */
 }
+
+/* ====== Grille 4 colonnes quand la boutique est présente ====== */
+.layout.layout-4.with-shop{
+  display: grid;
+  grid-template-columns: 260px 240px 1fr 260px; /* Boutique | SideNav | Main | RightBar */
+  gap: 16px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+/* Harmonise les collantes (boutique & sidebars) */
+.sidebar,
+.shop-sidebar {
+  position: sticky;
+  top: 16px;
+  height: fit-content;
+}
+
+/* RESPONSIVE : comme le container est à 1200px, on masque la droite en premier */
+@media (max-width: 1100px){
+  .layout.layout-4.with-shop{
+    grid-template-columns: 260px 1fr; /* Boutique | Main */
+  }
+  .sidebar, .rightbar { display: none; } /* cache SideNav + RightBar */
+}
+
+@media (max-width: 900px){
+  .layout.layout-4.with-shop{
+    grid-template-columns: 1fr;       /* tout en une colonne */
+  }
+  .shop-sidebar { position: static; } /* plus de sticky sur mobile */
+}
