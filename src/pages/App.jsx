@@ -10,7 +10,7 @@ import SideNav from '../components/SideNav.jsx';
 import RightBar from '../components/RightBar.jsx';
 import { levelFromXp } from '../lib/levels.js';
 import AccountPanel from '../components/AccountPanel.jsx';
-import ShopSidebar from '../components/ShopSideBar.jsx'; // ← colonne boutique
+import ShopSidebar from '../components/ShopSideBar.jsx';
 import '../account.css';
 
 const API = import.meta.env.MODE === 'development'
@@ -127,13 +127,6 @@ export default function App() {
               <p>Chargement du texte…</p>
             )}
           </div>
-
-          {/* AccountPanel à la suite */}
-          {user && (
-  <div style={{ marginTop: 16, gridColumn: "1 / -1" }}>
-    <AccountPanel user={user} onUserUpdate={refreshUser} />
-  </div>
-)}
         </main>
 
         {/* Colonne 4 : RightBar */}
@@ -143,6 +136,19 @@ export default function App() {
           onGoRanked={goDuel}
           onSelectMode={selectMode}
         />
+
+        {/* ===== AccountPanel LARGE : s'étend des colonnes 2 → 4 (à droite de la boutique) ===== */}
+        {user && (
+          <div
+            className="account-wide-wrap"
+            style={{
+              gridColumn: '2 / 5',   // couvre SideNav + Main + RightBar
+              marginTop: 16
+            }}
+          >
+            <AccountPanel user={user} onUserUpdate={refreshUser} />
+          </div>
+        )}
       </div>
 
       <RanksModal open={ranksOpen} onClose={()=>setRanksOpen(false)} rating={user?.rating ?? 0} />
