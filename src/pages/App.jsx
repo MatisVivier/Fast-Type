@@ -9,7 +9,8 @@ import SideNav from '../components/SideNav.jsx';       // ⟵ sidebar gauche (ac
 import RightBar from '../components/RightBar.jsx';     // ⟵ sidebar droite (modes)
 import { levelFromXp } from '../lib/levels.js';
 import AccountPanel from '../components/AccountPanel.jsx';
-import '../account.css'
+import ShopSidebar from '../components/ShopSideBar.jsx'; // ⟵ ta boutique (tout à gauche)
+import '../account.css';
 import CurrencyBadge from '../shared/CurrencyBadge.jsx';
 
 const API = 'https://fast-type-back.onrender.com/api';
@@ -26,6 +27,9 @@ export default function App() {
 
   const [page, setPage] = useState('home');     // 'home' | 'auth' | 'duel'
   const [user, setUser] = useState(null);
+
+  // NEW: état d’ouverture de la boutique
+  const [shopOpen, setShopOpen] = useState(false);
 
   const fetchRandom = async (lim = limitSec) => {
     const count = wordCountFor(lim);
@@ -70,12 +74,20 @@ export default function App() {
     <div className="container">
       <div className="navbar" style={{ display:'flex', justifyContent:'space-between', alignItems:'center'}}>
         <h1>Duel Keys</h1>
+
+        {/* Bouton Boutique dans la navbar (visible si connecté) */}
+        <div className="row">
+          {user && (
+            <button className="btn" onClick={() => setShopOpen(true)}>🛒 Boutique</button>
+          )}
+        </div>
+
         <div className="row">
           {user ? (
             <>
               <span className="stat">👤 {user.username || user.email}</span>
               <span className="stat">Lvl {lvl.level} • {lvl.inLevel}/{lvl.need} XP</span>
-              <span className="stat">{user.coin_balance} pièces</span>
+              <span className="stat">{user?.coin_balance ?? 0} pièces</span>
               <span className="stat">
                 Elo: <strong>{user.rating}</strong>
                 {' '}•{' '}
@@ -91,8 +103,11 @@ export default function App() {
         </div>
       </div>
 
-      {/* === Nouveau layout : sidebar gauche | zone de jeu | sidebar droite === */}
+      {/* === Nouveau layout : sidebar shop (overlay tout à gauche) | sidebar gauche | zone de jeu | sidebar droite === */}
       <div className="layout layout-3">
+        {/* Boutique tout à gauche, par-dessus le reste */}
+        {shopOpen && <ShopSidebar onClose={() => setShopOpen(false)} />}
+
         <SideNav
           limitSec={limitSec}
           setLimitSec={(d) => setLimitSec(d)}
@@ -132,9 +147,9 @@ export default function App() {
 
       <RanksModal open={ranksOpen} onClose={()=>setRanksOpen(false)} rating={user?.rating ?? 0} />
 
-        {user && (
-  <AccountPanel user={user} onUserUpdate={refreshUser} />
-)}
+      {user && (
+        <AccountPanel user={user} onUserUpdate={refreshUser} />
+      )}
     </div>
   );
 }

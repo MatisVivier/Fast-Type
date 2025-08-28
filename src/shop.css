@@ -1,0 +1,39 @@
+.shop-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;              /* tout à gauche de l’écran */
+  width: 220px;
+  height: 100vh;
+  background: #111;
+  color: #fff;
+  padding: 16px;
+  box-shadow: 2px 0 6px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  z-index: 2000;        /* au-dessus de la SideNav */
+}
+
+.shop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.shop-header h2 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.shop-content {
+  flex: 1;
+  overflow-y: auto;
+}
