@@ -180,36 +180,28 @@ th, td { text-align: left; padding: 10px 12px; }
 }
 
 /* 4 colonnes : Boutique | SideNav | Main | RightBar */
-.layout.layout-4.with-shop{
-  display: grid;
-  grid-template-columns: 260px 200px minmax(0, 1fr) 240px;
-  gap: 16px;
-  align-items: start;
-  margin-top: 16px;
+/* 5 colonnes : Boutique | SideNav | Main | RightBar | Friends */
+.layout.layout-5.with-shop.with-friends{
+  display:grid;
+  grid-template-columns: 260px 200px minmax(0,1fr) 240px 260px;
+  gap:16px;
+  align-items:start;
+  margin-top:16px;
 }
 
-/* Collants */
-.sidebar,
-.shop-sidebar {
-  position: sticky;
-  top: 16px;
-  height: fit-content;
-}
-
-/* AccountPanel large en responsive */
+/* Ajustements responsive */
 @media (max-width: 1100px){
-  .layout.layout-4.with-shop{
-    grid-template-columns: 260px 1fr; /* Boutique | Main (tout le reste) */
+  .layout.layout-5.with-shop.with-friends{
+    grid-template-columns: 260px 1fr; /* Boutique | Main */
   }
-  .sidebar, .rightbar { display: none; }
-  .account-wide-wrap { grid-column: 1 / -1; } /* full width sous la grille réduite */
+  .sidebar, .rightbar, .friendsbar { display:none; }
+  .account-wide-wrap { grid-column: 1 / -1; }
 }
 
 @media (max-width: 900px){
-  .layout.layout-4.with-shop{
+  .layout.layout-5.with-shop.with-friends{
     grid-template-columns: 1fr;
   }
   .shop-sidebar { position: static; }
   .account-wide-wrap { grid-column: 1 / -1; }
 }
-

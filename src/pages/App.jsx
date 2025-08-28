@@ -11,6 +11,7 @@ import RightBar from '../components/RightBar.jsx';
 import { levelFromXp } from '../lib/levels.js';
 import AccountPanel from '../components/AccountPanel.jsx';
 import ShopSidebar from '../components/ShopSideBar.jsx';
+import FriendsSidebar from '../components/FriendsSidebar.jsx'; // ← NEW
 import '../account.css';
 
 const API = import.meta.env.MODE === 'development'
@@ -93,8 +94,8 @@ export default function App() {
         </div>
       </div>
 
-      {/* ===== 4 colonnes : Boutique | SideNav | Main | RightBar ===== */}
-      <div className="layout layout-4 with-shop">
+      {/* ===== 5 colonnes : Boutique | SideNav | Main | RightBar | Friends ===== */}
+      <div className="layout layout-5 with-shop with-friends">
         {/* Colonne 1 : BOUTIQUE */}
         <ShopSidebar />
 
@@ -120,7 +121,6 @@ export default function App() {
                     await apiPost('/solo/finish', stats);
                     await refreshUser();
                   }
-                  console.log('Résultat solo', stats);
                 }}
               />
             ) : (
@@ -137,12 +137,15 @@ export default function App() {
           onSelectMode={selectMode}
         />
 
-        {/* ===== AccountPanel LARGE : s'étend des colonnes 2 → 4 (à droite de la boutique) ===== */}
+        {/* Colonne 5 : Friends */}
+        <FriendsSidebar />
+
+        {/* AccountPanel LARGE : s'étend des colonnes 2 → 6 (tout à droite de la boutique) */}
         {user && (
           <div
             className="account-wide-wrap"
             style={{
-              gridColumn: '2 / 5',   // couvre SideNav + Main + RightBar
+              gridColumn: '2 / 6',
               marginTop: 16
             }}
           >

@@ -1,0 +1,57 @@
+.friendsbar{
+  background:#12141a;
+  border:1px solid #1e222a;
+  border-radius:14px;
+  padding:14px;
+  width:100%;                 /* largeur pilotée par la grille */
+  position:sticky;
+  top:16px;
+  height:fit-content;
+}
+
+.friends-header h2{ font-size:18px; margin:0 0 8px 0; }
+
+.friends-section{ margin-top:12px; }
+.add-row{ display:flex; gap:8px; }
+.input{
+  width:100%;
+  background:#0f1116;
+  border:1px solid #1e222a;
+  color:#e6edf3;
+  border-radius:10px;
+  padding:10px 12px;
+  font-family:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size:14px;
+}
+
+.req-list{ display:flex; flex-direction:column; gap:8px; }
+.req-item{
+  display:flex; justify-content:space-between; align-items:center;
+  background:#0f1116; border:1px solid #1e222a; border-radius:10px; padding:10px;
+}
+.req-user{ font-weight:600; }
+.req-actions{ display:flex; gap:8px; }
+
+.friends-list{
+  list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px;
+}
+.friend-item{
+  display:flex; justify-content:space-between; align-items:center;
+  background:#0f1116; border:1px solid #1e222a; border-radius:10px; padding:10px;
+}
+.f-left{ display:flex; gap:10px; align-items:center; }
+.f-texts{ display:flex; flex-direction:column; }
+.f-name{ font-weight:700; }
+.f-sub{ font-size:12px; }
+
+.dot{
+  width:10px; height:10px; border-radius:999px; display:inline-block;
+  border:1px solid #1e222a;
+}
+.dot.online{ background:#a3ffba; }
+.dot.offline{ background:#2b313a; }
+
+/* Responsive : même logique que tes autres sidebars */
+@media (max-width: 1100px){
+  .friendsbar{ display:none; }
+}
