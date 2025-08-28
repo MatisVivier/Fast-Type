@@ -239,3 +239,12 @@ th, td { text-align: left; padding: 10px 12px; }
   }
   .shop-sidebar, .friendsbar { position: static; }
 }
+
+/* AccountPanel centré (largeur max fixe) */
+.account-wide-wrap.center {
+  grid-column: 2 / 5;       /* occupe SideNav + Main + RightBar */
+  width: 100%;
+  max-width: 1200px;        /* ajuste selon ton goût (ex: 1000–1300px) */
+  justify-self: center;     /* centre horizontalement dans la grille */
+}
+

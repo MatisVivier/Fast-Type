@@ -142,9 +142,10 @@ export default function App() {
 
         {/* ===== AccountPanel : full width sous toute la grille ===== */}
         {user && (
-          <div className="account-wide-wrap full" style={{ marginTop: 16 }}>
-            <AccountPanel user={user} onUserUpdate={refreshUser} />
-          </div>
+          <div className="account-wide-wrap center" style={{ marginTop: 16 }}>
+  <AccountPanel user={user} onUserUpdate={refreshUser} />
+</div>
+
         )}
       </div>
 
