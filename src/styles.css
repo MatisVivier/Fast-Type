@@ -18,7 +18,7 @@ a { color: inherit; text-decoration: none; }
 .muted { color: #9aa4af; }
 
 /* ========= Layout container & cards ========= */
-.container { max-width: 1200px; margin: 0px auto; padding: 0 16px;}
+.container { max-width: 1600px; margin: 0px auto; padding: 0 16px;}
 .card { background: #12141a; border: 1px solid #1e222a; border-radius: 14px; padding: 46.5px; }
 .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; text-align: center; }
 .navbar {
@@ -179,29 +179,69 @@ th, td { text-align: left; padding: 10px 12px; }
   .sidebar{ position: static; order: -1; } /* sidebar gauche passe au-dessus */
 }
 
-/* 4 colonnes : Boutique | SideNav | Main | RightBar */
-/* 5 colonnes : Boutique | SideNav | Main | RightBar | Friends */
+/* ====== largeur du container (tu es passé à 1600px) ====== */
+.container { max-width: 1600px; margin: 0 auto; padding: 0 16px; }
+
+/* ====== grille 5 colonnes (tu peux affiner les largeurs si besoin) ====== */
 .layout.layout-5.with-shop.with-friends{
   display:grid;
-  grid-template-columns: 260px 200px minmax(0,1fr) 240px 260px;
+  grid-template-columns: 280px 220px minmax(0,1fr) 260px 280px; /* Shop | Side | Main | Right | Friends */
   gap:16px;
   align-items:start;
   margin-top:16px;
 }
 
-/* Ajustements responsive */
+/* ====== AccountPanel : deux modes ====== */
+/* Full width : il ferme toute la largeur sous la grille */
+.account-wide-wrap.full { grid-column: 1 / -1; }
+
+/* Centré : large mais pas bord à bord, reste à droite de la boutique */
+.account-wide-wrap.center {
+  grid-column: 2 / 5;           /* SideNav + Main + RightBar */
+  width:100%;
+  max-width: 1200px;            /* ajuste à ton goût: 1200–1300 */
+  justify-self: center;         /* centre le bloc dans sa zone */
+}
+
+/* ====== Sticky par défaut (comme aujourd’hui) ====== */
+.sidebar, .rightbar, .friendsbar, .shop-sidebar {
+  position: sticky;
+  top: 16px;
+  height: fit-content;
+}
+
+/* ====== OPTION : hauteurs égales (désactive le sticky) ====== */
+/* Ajoute la classe .equal-heights sur la grille pour activer cette section */
+.layout.equal-heights .sidebar,
+.layout.equal-heights .rightbar,
+.layout.equal-heights .friendsbar,
+.layout.equal-heights .shop-sidebar {
+  position: static;      /* casse le sticky */
+  align-self: stretch;   /* occupe toute la hauteur de la rangée */
+  height: 100%;
+}
+
+/* Pour que l’intérieur reste joli en stretch */
+.layout.equal-heights .shop-sidebar,
+.layout.equal-heights .rightbar,
+.layout.equal-heights .friendsbar,
+.layout.equal-heights .sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ====== Responsive conservé ====== */
 @media (max-width: 1100px){
   .layout.layout-5.with-shop.with-friends{
-    grid-template-columns: 260px 1fr; /* Boutique | Main */
+    grid-template-columns: 260px 1fr; /* Shop | Main */
   }
-  .sidebar, .rightbar, .friendsbar { display:none; }
-  .account-wide-wrap { grid-column: 1 / -1; }
+  .sidebar, .rightbar, .friendsbar { display: none; }
+  .account-wide-wrap.full,
+  .account-wide-wrap.center { grid-column: 1 / -1; }
 }
 
 @media (max-width: 900px){
-  .layout.layout-5.with-shop.with-friends{
-    grid-template-columns: 1fr;
-  }
+  .layout.layout-5.with-shop.with-friends{ grid-template-columns: 1fr; }
   .shop-sidebar { position: static; }
-  .account-wide-wrap { grid-column: 1 / -1; }
 }
+

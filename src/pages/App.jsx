@@ -95,7 +95,7 @@ export default function App() {
       </div>
 
       {/* ===== 5 colonnes : Boutique | SideNav | Main | RightBar | Friends ===== */}
-      <div className="layout layout-5 with-shop with-friends">
+      <div className="layout layout-5 with-shop  equal-heights">
         {/* Colonne 1 : BOUTIQUE */}
         <ShopSidebar />
 
@@ -142,16 +142,14 @@ export default function App() {
 
         {/* AccountPanel LARGE : s'étend des colonnes 2 → 6 (tout à droite de la boutique) */}
         {user && (
-          <div
-            className="account-wide-wrap"
-            style={{
-              gridColumn: '2 / 6',
-              marginTop: 16
-            }}
-          >
-            <AccountPanel user={user} onUserUpdate={refreshUser} />
-          </div>
-        )}
+  <div
+    className="account-wide-wrap full"   // ← full width sous toute la grille
+    style={{ marginTop: 16 }}
+  >
+    <AccountPanel user={user} onUserUpdate={refreshUser} />
+  </div>
+)}
+
       </div>
 
       <RanksModal open={ranksOpen} onClose={()=>setRanksOpen(false)} rating={user?.rating ?? 0} />
