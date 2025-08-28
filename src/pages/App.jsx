@@ -142,7 +142,7 @@ export default function App() {
 
         {/* ===== AccountPanel : full width sous toute la grille ===== */}
         {user && (
-          <div className="account-wide-wrap center" style={{ marginTop: 16 }}>
+          <div className="account-wide-wrap center" style={{ marginTop: "-20%" }}>
   <AccountPanel user={user} onUserUpdate={refreshUser} />
 </div>
 
