@@ -180,9 +180,10 @@ th, td { text-align: left; padding: 10px 12px; }
 }
 
 /* ====== Grille 4 colonnes quand la boutique est présente ====== */
-.layout.layout-4.with-shop{
+/* 4 colonnes : Boutique | SideNav | Main (large) | RightBar */
+.layout.layout-4.with-shop {
   display: grid;
-  grid-template-columns: 260px 240px 1fr 260px; /* Boutique | SideNav | Main | RightBar */
+  grid-template-columns: 260px 200px minmax(0, 1fr) 240px;
   gap: 16px;
   align-items: start;
   margin-top: 16px;
@@ -193,7 +194,7 @@ th, td { text-align: left; padding: 10px 12px; }
 .shop-sidebar {
   position: sticky;
   top: 16px;
-  height: fit-content;
+  height: 800px;
 }
 
 /* RESPONSIVE : comme le container est à 1200px, on masque la droite en premier */

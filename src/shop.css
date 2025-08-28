@@ -5,7 +5,6 @@
   border-radius: 14px;
   padding: 14px;
   width: 100%;          /* la largeur est pilotée par la grille (260px) */
-  max-height: calc(100vh - 16px - 40px); /* 16px top sticky + ~40px marge navbar */
   overflow: auto;       /* scroll interne si contenu long */
 }
 

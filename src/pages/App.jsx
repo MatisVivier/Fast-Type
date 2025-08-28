@@ -130,10 +130,10 @@ export default function App() {
 
           {/* AccountPanel à la suite */}
           {user && (
-            <div style={{ marginTop: 16 }}>
-              <AccountPanel user={user} onUserUpdate={refreshUser} />
-            </div>
-          )}
+  <div style={{ marginTop: 16, gridColumn: "1 / -1" }}>
+    <AccountPanel user={user} onUserUpdate={refreshUser} />
+  </div>
+)}
         </main>
 
         {/* Colonne 4 : RightBar */}
