@@ -1,22 +1,51 @@
 import React from 'react';
 import '../shop.css';
 
-export default function ShopSidebar({ onClose }) {
+export default function ShopSidebar() {
   return (
-    <div className="shop-sidebar">
+    <aside className="shop-sidebar">
       <div className="shop-header">
         <h2>🛒 Boutique</h2>
-        <button className="close-btn" onClick={onClose}>×</button>
       </div>
 
       <div className="shop-content">
-        <p>💎 Ici tu pourras acheter des items avec tes pièces.</p>
-        <ul>
-          <li>⚡ Boost vitesse (10 pièces)</li>
-          <li>🔭 Vision augmentée (15 pièces)</li>
-          <li>❤️ Soin (20 pièces)</li>
+        <p>💎 Achète des items avec tes pièces.</p>
+
+        <ul className="shop-list">
+          <li className="shop-item">
+            <div className="item-left">
+              <span className="item-emoji">⚡</span>
+              <div className="item-infos">
+                <div className="item-title">Boost vitesse</div>
+                <div className="item-desc">+vitesse pendant un run</div>
+              </div>
+            </div>
+            <div className="item-price">10 <span className="coin">pièces</span></div>
+          </li>
+
+          <li className="shop-item">
+            <div className="item-left">
+              <span className="item-emoji">🔭</span>
+              <div className="item-infos">
+                <div className="item-title">Vision augmentée</div>
+                <div className="item-desc">zone de visibilité +large</div>
+              </div>
+            </div>
+            <div className="item-price">15 <span className="coin">pièces</span></div>
+          </li>
+
+          <li className="shop-item">
+            <div className="item-left">
+              <span className="item-emoji">❤️</span>
+              <div className="item-infos">
+                <div className="item-title">Soin</div>
+                <div className="item-desc">récupère une vie</div>
+              </div>
+            </div>
+            <div className="item-price">20 <span className="coin">pièces</span></div>
+          </li>
         </ul>
       </div>
-    </div>
+    </aside>
   );
 }

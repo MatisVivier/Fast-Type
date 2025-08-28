@@ -5,11 +5,11 @@ import Duel from './Duel.jsx';
 import { apiGet, apiPost } from '../lib/api.js';
 import RanksModal from '../components/RanksModal.jsx';
 import { getRank } from '../lib/ranks.js';
-import SideNav from '../components/SideNav.jsx';       // ⟵ sidebar gauche (actions)
-import RightBar from '../components/RightBar.jsx';     // ⟵ sidebar droite (modes)
+import SideNav from '../components/SideNav.jsx';
+import RightBar from '../components/RightBar.jsx';
 import { levelFromXp } from '../lib/levels.js';
 import AccountPanel from '../components/AccountPanel.jsx';
-import ShopSidebar from '../components/ShopSideBar.jsx'; // ⟵ ta boutique (tout à gauche)
+import ShopSidebar from '../components/ShopSideBar.jsx'; // ← colonne boutique
 import '../account.css';
 import CurrencyBadge from '../shared/CurrencyBadge.jsx';
 
@@ -27,11 +27,8 @@ export default function App() {
   const [limitSec, setLimitSec] = useState(30);
   const [seed, setSeed] = useState(0);
 
-  const [page, setPage] = useState('home');     // 'home' | 'auth' | 'duel'
+  const [page, setPage] = useState('home'); // 'home' | 'auth' | 'duel'
   const [user, setUser] = useState(null);
-
-  // NEW: état d’ouverture de la boutique
-  const [shopOpen, setShopOpen] = useState(false);
 
   const fetchRandom = async (lim = limitSec) => {
     const count = wordCountFor(lim);
@@ -60,7 +57,6 @@ export default function App() {
     setPage('duel');
   };
 
-  // Sélection d’un mode depuis la sidebar droite (à étendre plus tard)
   const selectMode = (modeId) => {
     if (modeId === 'solo_time') setPage('home');
     if (modeId === 'daily') alert('Le Défi du jour arrive bientôt ✨');
@@ -77,12 +73,7 @@ export default function App() {
       <div className="navbar" style={{ display:'flex', justifyContent:'space-between', alignItems:'center'}}>
         <h1>Duel Keys</h1>
 
-        {/* Bouton Boutique dans la navbar (visible si connecté) */}
-        <div className="row">
-          {user && (
-            <button className="btn" onClick={() => setShopOpen(true)}>🛒 Boutique</button>
-          )}
-        </div>
+        {/* plus de bouton Boutique, la colonne est toujours visible */}
 
         <div className="row">
           {user ? (
@@ -105,10 +96,9 @@ export default function App() {
         </div>
       </div>
 
-      {/* === Nouveau layout : sidebar shop (overlay tout à gauche) | sidebar gauche | zone de jeu | sidebar droite === */}
-      <div className="layout layout-3">
-        {/* Boutique tout à gauche, par-dessus le reste */}
-        {shopOpen && <ShopSidebar onClose={() => setShopOpen(false)} />}
+      {/* Layout avec boutique à gauche */}
+      <div className="layout with-shop">
+        <ShopSidebar /> {/* ← colonne la plus à gauche */}
 
         <SideNav
           limitSec={limitSec}
