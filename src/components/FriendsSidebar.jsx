@@ -1,31 +1,24 @@
-// FriendsSidebar.jsx
 import React, { useEffect, useState } from 'react';
 import '../friends.css';
+import { apiGet, apiPost, apiDelete } from '../lib/api.js';
 
 export default function FriendsSidebar() {
   const [me, setMe] = useState(null);
-
-  // --- Ajouter par recherche ---
   const [search, setSearch] = useState('');
   const [results, setResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [selected, setSelected] = useState(null); // user sélectionné sous la barre
-
-  // --- Demandes & amis ---
+  const [selected, setSelected] = useState(null);
   const [pending, setPending] = useState([]);
   const [friends, setFriends] = useState([]);
   const [busy, setBusy] = useState(false);
 
-  // --- Boot: who am I + initial data ---
   useEffect(() => {
     (async () => {
       try {
-        // Ton back a déjà un /api/auth/me
-        const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-        const meJson = await meRes.json();
+        const meJson = await apiGet('/auth/me'); // <-- ABSOLU via api.js
         setMe(meJson?.user || null);
       } catch (e) {
-        console.error('me error', e);
+        console.warn('me error', e);
       }
       await refreshAll();
     })();
@@ -33,12 +26,10 @@ export default function FriendsSidebar() {
 
   async function refreshAll() {
     try {
-      const [reqRes, frRes] = await Promise.all([
-        fetch('/api/friends/requests', { credentials: 'include' }),
-        fetch('/api/friends',         { credentials: 'include' }),
+      const [reqJson, frJson] = await Promise.all([
+        apiGet('/friends/requests'),
+        apiGet('/friends'),
       ]);
-      const reqJson = await reqRes.json();
-      const frJson  = await frRes.json();
       setPending(reqJson.items || []);
       setFriends(frJson.items || []);
     } catch (e) {
@@ -46,7 +37,6 @@ export default function FriendsSidebar() {
     }
   }
 
-  // --- Autocomplete (debounce) ---
   useEffect(() => {
     if (!search.trim()) {
       setResults([]);
@@ -57,86 +47,38 @@ export default function FriendsSidebar() {
     const t = setTimeout(async () => {
       setSearchLoading(true);
       try {
-        const res = await fetch(`/api/friends/search?q=${encodeURIComponent(search)}`, {
-          credentials: 'include',
-          signal: ctrl.signal,
-        });
-        const json = await res.json();
+        const json = await apiGet(`/friends/search?q=${encodeURIComponent(search)}`);
         setResults(json.items || []);
       } catch (e) {
-        if (e.name !== 'AbortError') console.error('search error', e);
+        // si CORS/401 → affiche une info plutôt que de crasher
+        console.error('search error', e);
+        setResults([]);
       } finally {
         setSearchLoading(false);
       }
-    }, 200); // petit debounce
-    return () => {
-      clearTimeout(t);
-      ctrl.abort();
-    };
+    }, 200);
+    return () => { clearTimeout(t); ctrl.abort(); };
   }, [search]);
 
-  // --- Ajouter un ami depuis "selected" ---
   async function addSelected() {
     if (!selected?.id) return;
     setBusy(true);
     try {
-      const res = await fetch('/api/friends/requests', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to_user_id: selected.id }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        const code = err?.error || res.status;
-        alert(`Impossible d'envoyer l'invitation (${code})`);
-        return;
-      }
-      // reset sélection + refresh demandes
+      await apiPost('/friends/requests', { to_user_id: selected.id });
       setSelected(null);
       setSearch('');
       setResults([]);
       await refreshAll();
     } catch (e) {
       console.error('add friend error', e);
-      alert('Erreur réseau lors de l’envoi de la demande');
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  // --- Demandes: accept/refuse/cancel ---
-  async function acceptReq(id) {
-    setBusy(true);
-    try {
-      await fetch(`/api/friends/requests/${id}/accept`, { method: 'POST', credentials: 'include' });
-      await refreshAll();
-    } finally { setBusy(false); }
-  }
-  async function declineReq(id) {
-    setBusy(true);
-    try {
-      await fetch(`/api/friends/requests/${id}/decline`, { method: 'POST', credentials: 'include' });
-      await refreshAll();
-    } finally { setBusy(false); }
-  }
-  async function cancelReq(id) {
-    setBusy(true);
-    try {
-      await fetch(`/api/friends/requests/${id}/cancel`,  { method: 'POST', credentials: 'include' });
-      await refreshAll();
+      alert(`Impossible d'envoyer la demande: ${e?.error || e?.status || 'erreur réseau'}`);
     } finally { setBusy(false); }
   }
 
-  // --- Amis: supprimer ---
-  async function removeFriend(id) {
-    if (!confirm('Supprimer cet ami ?')) return;
-    setBusy(true);
-    try {
-      await fetch(`/api/friends/${id}`, { method: 'DELETE', credentials: 'include' });
-      await refreshAll();
-    } finally { setBusy(false); }
-  }
+  async function acceptReq(id) { setBusy(true); try { await apiPost(`/friends/requests/${id}/accept`); await refreshAll(); } finally { setBusy(false); } }
+  async function declineReq(id) { setBusy(true); try { await apiPost(`/friends/requests/${id}/decline`); await refreshAll(); } finally { setBusy(false); } }
+  async function cancelReq(id)  { setBusy(true); try { await apiPost(`/friends/requests/${id}/cancel`);  await refreshAll(); } finally { setBusy(false); } }
+  async function removeFriend(id){ if(!confirm('Supprimer cet ami ?')) return; setBusy(true); try { await apiDelete(`/friends/${id}`); await refreshAll(); } finally { setBusy(false); } }
 
   // --- Affichage demande: entrante vs sortante ---
   const isIncoming = (r) => me && r.to_user_id === me.id;     // on m’a invité
